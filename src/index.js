@@ -8,7 +8,7 @@ const http = require("http");
 const server = http.createServer(app);
 const { Server } = require("socket.io");
 const { generateMessage } = require("./utils/messages");
-const { addUser, getUsersInRoom } = require("./utils/users");
+const { addUser, getUsersInRoom, getUser } = require("./utils/users");
 const io = new Server(server);
 
 // io가 connection이 일어나면 socket을 받아온다.
@@ -30,13 +30,21 @@ io.on("connection", (socket) => {
       .to(user.room)
       .emit("message", generateMessage("", `${user.username}가 참여했습니다.`));
 
+    // 모든 사람들에게 보내준다.
     io.to(user.room).emit("roomData", {
       room: user.room,
       users: getUsersInRoom(user.room),
     });
   });
 
-  socket.on("sendMessage", () => {});
+  socket.on("sendMessage", (message, callback) => {
+    // users 배열에 socket에 유저 정보가 담겨져있다.
+    const user = getUser(socket.id);
+    io.to(user.room).emit("message", generateMessage(user.username, message));
+
+    // chat.js socket.emit부분 호출
+    callback();
+  });
 
   socket.on("disconnect", () => {
     console.log(socket.id);
