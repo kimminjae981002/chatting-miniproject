@@ -8,7 +8,12 @@ const http = require("http");
 const server = http.createServer(app);
 const { Server } = require("socket.io");
 const { generateMessage } = require("./utils/messages");
-const { addUser, getUsersInRoom, getUser } = require("./utils/users");
+const {
+  addUser,
+  getUsersInRoom,
+  getUser,
+  removeUser,
+} = require("./utils/users");
 const io = new Server(server);
 
 // io가 connection이 일어나면 socket을 받아온다.
@@ -47,7 +52,18 @@ io.on("connection", (socket) => {
   });
 
   socket.on("disconnect", () => {
-    console.log(socket.id);
+    const user = removeUser(socket.id);
+
+    if (user) {
+      io.to(user.room).emit(
+        "message",
+        generateMessage("Admin", `${user.username}가 방을 나갔습니다.`),
+        io.to(user.room).emit("roomData", {
+          room: user.room,
+          users: getUsersInRoom(user.room),
+        })
+      );
+    }
   });
 });
 
