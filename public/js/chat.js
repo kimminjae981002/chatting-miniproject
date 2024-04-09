@@ -12,10 +12,10 @@ socket.emit("join", { username, room }, (error) => {
   }
 });
 
+// 유저 입장 시 템플릿
 const sidebarTemplate = document.querySelector("#sidebar-template").innerHTML;
 
 socket.on("roomData", ({ room, users }) => {
-  console.log(sidebarTemplate);
   const html = Mustache.render(sidebarTemplate, {
     room,
     users,
@@ -24,4 +24,22 @@ socket.on("roomData", ({ room, users }) => {
   document.querySelector("#sidebar").innerHTML = html;
 });
 
-socket.on("message");
+// 유저 입장 시 환영메시지 템플릿
+const messageTemplate = document.querySelector("#message-template").innerHTML;
+const messages = document.querySelector("#messages");
+
+socket.on("message", (message) => {
+  const html = Mustache.render(messageTemplate, {
+    username: message.username,
+    message: message.text,
+    createdAt: moment(message.createdAt).format("h:mm a"),
+  });
+
+  messages.insertAdjacentHTML("beforeend", html);
+  scrollToBottom();
+});
+
+// 데이터가 위에 쌓이면 스코롤 올려주기
+function scrollToBottom() {
+  messages.scrollTop = messages.scrollHeight;
+}

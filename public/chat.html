@@ -6,6 +6,7 @@
     <link rel="stylesheet" href="./css/style.css" />
     <script src="/socket.io/socket.io.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mustache.js/3.0.1/mustache.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.30.1/moment.min.js"></script>
     <script src="./js/chat.js" defer></script>
     <title>Document</title>
   </head>
@@ -35,6 +36,20 @@
         <li>{{username}}</li>
         {{/users}}
       </ul>
+    </script>
+
+    <script id="message-template" type="text/html">
+      <div class="message">
+        <p>
+          <span
+            class="
+          message_name"
+            >{{username}}</span
+          >
+          <span class="message_mete">{{createdAt}}</span>
+        </p>
+        <p>{{message}}</p>
+      </div>
     </script>
   </body>
 </html>

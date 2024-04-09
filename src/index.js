@@ -35,7 +35,7 @@ io.on("connection", (socket) => {
       users: getUsersInRoom(user.room),
     });
   });
-  // 방에 참여 시에 환영 메시지
+
   socket.on("sendMessage", () => {});
 
   socket.on("disconnect", () => {
