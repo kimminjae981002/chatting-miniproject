@@ -13,7 +13,15 @@ const io = new Server(server);
 io.on("connection", (socket) => {
   console.log("socket", socket.id);
 
-  socket.on("join", () => {});
+  // 클라이언트에서 join으로 데이터를 받아온다.
+  socket.on("join", (options, callback) => {
+    const { error, user } = addUser({ id: socket.id, ...options });
+    if (error) {
+      return callback(error);
+    }
+
+    socket.join(user.room); // 방이 socket에 진입한다.
+  });
   socket.on("sendMessage", () => {});
   socket.on("disconnect", () => {
     console.log(socket.id);
