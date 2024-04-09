@@ -1,8 +1,9 @@
-// 방에 입장할 유저 로직 // 서버 socket io 로직에서 사용
-const addUser = ({ id, username, room }) => {
-  // db연결 시 db에서 찾아야됨
-  const users = [];
+// db연결 시 db에서 찾아야됨
+const users = [];
 
+// 방에 입장할 유저 로직 // 서버 socket io 로직에서 사용
+
+const addUser = ({ id, username, room }) => {
   username = username.trim();
   room = room.trim();
 

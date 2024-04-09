@@ -13,8 +13,6 @@ const io = new Server(server);
 
 // io가 connection이 일어나면 socket을 받아온다.
 io.on("connection", (socket) => {
-  console.log("socket", socket.id);
-
   // 클라이언트에서 join으로 데이터를 받아온다.
   socket.on("join", (options, callback) => {
     const { error, user } = addUser({ id: socket.id, ...options });
@@ -23,9 +21,7 @@ io.on("connection", (socket) => {
     }
 
     socket.join(user.room); // 방이 socket에 진입한다.
-  });
-  // 방에 참여 시에 환영 메시지
-  socket.on("sendMessage", () => {
+
     socket.emit(
       "message",
       generateMessage("Admin", `${user.room}방에 오신 걸 환영합니다.`)
@@ -33,11 +29,14 @@ io.on("connection", (socket) => {
     socket.broadcast // 나를 제외한 방에 있는 유저에게 보냄
       .to(user.room)
       .emit("message", generateMessage("", `${user.username}가 참여했습니다.`));
+
     io.to(user.room).emit("roomData", {
       room: user.room,
       users: getUsersInRoom(user.room),
     });
   });
+  // 방에 참여 시에 환영 메시지
+  socket.on("sendMessage", () => {});
 
   socket.on("disconnect", () => {
     console.log(socket.id);
