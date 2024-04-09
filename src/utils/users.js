@@ -27,6 +27,14 @@ const addUser = ({ id, username, room }) => {
   return { user };
 };
 
+// 같은 방에 있는 유저 찾는 로직
+const getUsersInRoom = (room) => {
+  room = room.trim();
+
+  return users.filter((user) => user.room === room);
+};
+
 module.exports = {
   addUser,
+  getUsersInRoom,
 };

@@ -7,6 +7,8 @@ const path = require("path");
 const http = require("http");
 const server = http.createServer(app);
 const { Server } = require("socket.io");
+const { generateMessage } = require("./utils/messages");
+const { addUser, getUsersInRoom } = require("./utils/users");
 const io = new Server(server);
 
 // io가 connection이 일어나면 socket을 받아온다.
@@ -22,7 +24,21 @@ io.on("connection", (socket) => {
 
     socket.join(user.room); // 방이 socket에 진입한다.
   });
-  socket.on("sendMessage", () => {});
+  // 방에 참여 시에 환영 메시지
+  socket.on("sendMessage", () => {
+    socket.emit(
+      "message",
+      generateMessage("Admin", `${user.room}방에 오신 걸 환영합니다.`)
+    ); // 나에게 보냄
+    socket.broadcast // 나를 제외한 방에 있는 유저에게 보냄
+      .to(user.room)
+      .emit("message", generateMessage("", `${user.username}가 참여했습니다.`));
+    io.to(user.room).emit("roomData", {
+      room: user.room,
+      users: getUsersInRoom(user.room),
+    });
+  });
+
   socket.on("disconnect", () => {
     console.log(socket.id);
   });
