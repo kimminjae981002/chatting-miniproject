@@ -51,9 +51,11 @@ io.on("connection", (socket) => {
     callback();
   });
 
+  // 서버에서 꺼지면 함수 실행
   socket.on("disconnect", () => {
     const user = removeUser(socket.id);
 
+    // 만약 유저가 있다면 방을 나간 걸 보여주고 users의 정보를 새로고침해준다.
     if (user) {
       io.to(user.room).emit(
         "message",
